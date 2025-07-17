@@ -821,14 +821,27 @@ echo:
 setlocal EnableDelayedExpansion
 
 set "SCRIPT_URL=https://raw.githubusercontent.com/yalozair/SmartMaintenance/main/SmartWindowsMaintenancePlus.bat"
-set "LOCAL_FILE=%~f0"
+set "TEMP_UPDATE=%TEMP%\SmartWindowsMaintenancePlus_update.bat"
 
 echo 🔍 Checking for updates to the tool...
 
-powershell -NoProfile -Command ^
-"$url='%SCRIPT_URL%'; $local='%LOCAL_FILE%'; try { $remote=(Invoke-WebRequest -Uri $url -UseBasicParsing).Content; $current=Get-Content -Path $local -Raw; if ($remote -ne $current) { Write-Host ''; Write-Host '⬇️ A new update is available... Downloading the new version...'; (New-Object Net.WebClient).DownloadFile($url, $local); Write-Host '✅ Successfully updated to the new version!'; Start-Sleep -Seconds 2; Start-Process -FilePath $local; exit } else { Write-Host '✅ The tool is already updated. There are no new updates.'; Start-Sleep -Seconds 2 } } catch { Write-Host '❌ An error occurred while trying to checkfor updates. Please ensure you are connected to the internet.'; Start-Sleep -Seconds 3 }"
+powershell -NoProfile -Command "$url='%SCRIPT_URL%'; $temp='%TEMP_UPDATE%'; try { $remote=(Invoke-WebRequest -Uri $url -UseBasicParsing).Content; Set-Content -Path $temp -Value $remote -Encoding UTF8; Write-Host '⬇️ A new update is available... Downloaded the new version to temp file.' } catch { Write-Host '❌ An error occurred while trying to check for updates. Please ensure you are connected to the internet.' }"
+
+if exist "%TEMP_UPDATE%" (
+    echo ✅ Update downloaded. Applying update...
+    timeout /t 1 /nobreak >nul
+    move /y "%TEMP_UPDATE%" "%~f0"
+    echo ✅ Update applied successfully.
+    echo Restarting the tool...
+    timeout /t 1 /nobreak >nul
+    start "" "%~f0"
+    exit
+) else (
+    echo ✅ The tool is already updated. No new updates found.
+    timeout /t 2 /nobreak >nul
+)
 
 endlocal
-::pause
-Exit
+
 goto MAIN
+
