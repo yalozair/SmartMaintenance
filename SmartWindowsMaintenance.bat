@@ -804,18 +804,15 @@ echo:
 echo:
 
 
-set "SCRIPT_URL=https://raw.githubusercontent.com/yalozair/SmartMaintenance/refs/heads/main/SmartWindowsMaintenance.bat"
-::PowerShell -Command "if((Invoke-WebRequest -Uri '%SCRIPT_URL%' -UseBasicParsing).Content -ne (Get-Content -Path '%~f0' -Raw)) { (New-Object System.Net.WebClient).DownloadFile('%SCRIPT_URL%', '%~f0') && echo ✅ تم تحديث الأداة بنجاح! && timeout /t 3 && start "" "%~f0" && exit }"
+setlocal
 
-powershell -Command ^
-  "$remote = Invoke-WebRequest -Uri '%SCRIPT_URL%' -UseBasicParsing; ^
-   $local = Get-Content -Path '%LOCAL_FILE%' -Raw; ^
-   if ($remote.Content -ne $local) { ^
-     (New-Object System.Net.WebClient).DownloadFile('%SCRIPT_URL%', '%LOCAL_FILE%'); ^
-     Write-Host 'تم تحديث الأداة بنجاح!'; ^
-     Start-Sleep -Seconds 3; ^
-     Start-Process -FilePath '%LOCAL_FILE%'; ^
-     exit ^
-   }"
+set "SCRIPT_URL=https://raw.githubusercontent.com/yalozair/SmartMaintenance/refs/heads/main/SmartWindowsMaintenance.bat"
+set "LOCAL_FILE=%~f0"
+
+PowerShell -Command "if ((Invoke-WebRequest -Uri '%SCRIPT_URL%' -UseBasicParsing).Content -ne (Get-Content -Path '%LOCAL_FILE%' -Raw)) { (New-Object System.Net.WebClient).DownloadFile('%SCRIPT_URL%', '%LOCAL_FILE%'); Write-Host 'تم التحديث بنجاح'; Start-Sleep -Seconds 3; Start-Process -FilePath '%LOCAL_FILE%'; exit }"
+
+endlocal
+
 pause
+
 goto MAIN
