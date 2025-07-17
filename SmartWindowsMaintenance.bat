@@ -79,6 +79,7 @@ echo [6] Security Center
 echo [7] System Restore Points
 echo [8] Printers Troubleshooting
 echo [9] Storage Analysis
+echo [10] Update SmartWindowsMaintenance
 echo [0] Exit
 echo.
 set /p opt= Choose an option [0-9]: 
@@ -92,6 +93,7 @@ if "%opt%"=="6" goto SECURITY
 if "%opt%"=="7" goto RESTORE
 if "%opt%"=="8" goto PRINTERS
 if "%opt%"=="9" goto STORAGE
+if "%opt%"=="10" goto UpdateTool
 if "%opt%"=="0" exit
 ::goto MAIN
 
@@ -785,3 +787,34 @@ if "%storage_opt%"=="4" (
 
 if "%storage_opt%"=="0" goto MAIN
 goto STORAGE
+
+
+:UpdateTool
+
+::cls
+
+echo 		=====================================================================
+echo 					File: SmartWindowsMaintenancePlus.bat
+echo 	 		Created and customized by: Yousif Alozair © 2025
+echo							Mobile: +967773640964
+echo 		All rights reserved. Redistribution is prohibited without permission.
+echo  			For internal technical use or personal maintenance only.
+echo 		=====================================================================
+echo:
+echo:
+
+
+set "SCRIPT_URL=https://raw.githubusercontent.com/yalozair/SmartMaintenance/refs/heads/main/SmartWindowsMaintenance.bat"
+::PowerShell -Command "if((Invoke-WebRequest -Uri '%SCRIPT_URL%' -UseBasicParsing).Content -ne (Get-Content -Path '%~f0' -Raw)) { (New-Object System.Net.WebClient).DownloadFile('%SCRIPT_URL%', '%~f0') && echo ✅ تم تحديث الأداة بنجاح! && timeout /t 3 && start "" "%~f0" && exit }"
+
+powershell -Command ^
+  "$remote = Invoke-WebRequest -Uri '%SCRIPT_URL%' -UseBasicParsing; ^
+   $local = Get-Content -Path '%LOCAL_FILE%' -Raw; ^
+   if ($remote.Content -ne $local) { ^
+     (New-Object System.Net.WebClient).DownloadFile('%SCRIPT_URL%', '%LOCAL_FILE%'); ^
+     Write-Host 'تم تحديث الأداة بنجاح!'; ^
+     Start-Sleep -Seconds 3; ^
+     Start-Process -FilePath '%LOCAL_FILE%'; ^
+     exit ^
+   }"
+goto MAIN
