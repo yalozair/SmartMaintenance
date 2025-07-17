@@ -826,7 +826,7 @@ set "LOCAL_FILE=%~f0"
 echo 🔍 Checking for updates to the tool...
 
 powershell -NoProfile -Command ^
-"$url='%SCRIPT_URL%'; $local='%LOCAL_FILE%'; try { $remote=(Invoke-WebRequest -Uri $url -UseBasicParsing).Content; $current=Get-Content -Path $local -Raw; if ($remote -ne $current) { Write-Host ''; Write-Host '⬇️ A new update is available... Downloading the new version...'; (New-Object Net.WebClient).DownloadFile($url, $local); Write-Host '✅ Successfully updated to the new version!'; Start-Sleep -Seconds 2; Start-Process -FilePath $local; exit } else { Write-Host '✅ The tool is already updated. There are no new updates.'; Start-Sleep -Seconds 2 } } catch { Write-Host '❌ An error occurred while trying to check for updates. Please ensure you are connected to the internet.'; Start-Sleep -Seconds 3 }"
+"$url='%SCRIPT_URL%'; $local='%LOCAL_FILE%'; try { $remote=(Invoke-WebRequest -Uri $url -UseBasicParsing).Content; $current=Get-Content -Path $local -Raw; if ($remote -ne $current) { Write-Host ''; Write-Host '⬇️ A new update is available... Downloading the new version...'; (New-Object Net.WebClient).DownloadFile($url, $local); Write-Host '✅ Successfully updated to the new version!'; Start-Sleep -Seconds 2; Start-Process -FilePath $local; exit } else { Write-Host '✅ The tool is already updated. There are no new updates.'; Start-Sleep -Seconds 2 } } catch { Write-Host '❌ An error occurred while trying to checkfor updates. Please ensure you are connected to the internet.'; Start-Sleep -Seconds 3 }"
 
 endlocal
 ::pause
