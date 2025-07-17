@@ -817,4 +817,5 @@ powershell -Command ^
      Start-Process -FilePath '%LOCAL_FILE%'; ^
      exit ^
    }"
+pause
 goto MAIN
