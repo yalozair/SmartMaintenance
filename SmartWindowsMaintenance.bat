@@ -830,4 +830,5 @@ powershell -NoProfile -Command ^
 
 endlocal
 ::pause
+Exit
 goto MAIN
