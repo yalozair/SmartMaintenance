@@ -82,7 +82,7 @@ echo [9] Storage Analysis
 echo [10] Update SmartWindowsMaintenance
 echo [0] Exit
 echo.
-set /p opt= Choose an option [0-9]: 
+set /p opt= Choose an option [0-10]: 
 
 if "%opt%"=="1" goto CLEAN
 if "%opt%"=="2" goto DIAG
@@ -111,7 +111,7 @@ echo:
 echo:
 
 echo --- Basic Cleanup Tasks ---
-echo [1] Clean Temp Files (Safe Mode)
+echo [1] Clean Temp Files
 echo [2] Empty Recycle Bin
 echo [3] Clear Prefetch Files
 echo [4] Clean System Cache
@@ -187,13 +187,19 @@ echo:
 echo --- System Diagnostics ---
 echo [1] Run SFC (System File Check)
 if not "%winVer%"=="5.1" if not "%winVer%"=="6.0" (
-    echo [2] Run DISM (Restore Windows Image)
+    echo [2] Run DISM (CheckHealth Windows Image)
 )
-echo [3] Run CHKDSK (Check Disk Health)
-echo [4] Memory Diagnostics
+if not "%winVer%"=="5.1" if not "%winVer%"=="6.0" (
+    echo [3] Run DISM (ScanHealth Windows Image)
+)
+if not "%winVer%"=="5.1" if not "%winVer%"=="6.0" (
+    echo [4] Run DISM (Restore Windows Image)
+)
+echo [5] Run CHKDSK (Check Disk Health)
+echo [6] Memory Diagnostics
 echo [0] Back
 echo.
-set /p r= Choose diagnostic option [0-4]:
+set /p r= Choose diagnostic option [0-6]:
 
 if "%r%"=="1" (
   echo Running SFC...
@@ -207,30 +213,59 @@ if "%r%"=="2" (
   if "%winVer%"=="6.0" goto DIAG_BLOCK
   echo Running DISM...
   echo [%date% %time%] DISM started >> "%userprofile%\Desktop\MaintenanceLog.txt"
-  DISM /Online /Cleanup-Image /RestoreHealth
+  echo ... DISM /Online /Cleanup-Image /CheckHealth
+  DISM /Online /Cleanup-Image /CheckHealth
   echo [%date% %time%] DISM completed >> "%userprofile%\Desktop\MaintenanceLog.txt"
 )
 
 if "%r%"=="3" (
+  if "%winVer%"=="5.1" goto DIAG_BLOCK
+  if "%winVer%"=="6.0" goto DIAG_BLOCK
+  echo Running DISM...
+  echo [%date% %time%] DISM started >> "%userprofile%\Desktop\MaintenanceLog.txt"
+    echo ... DISM /Online /Cleanup-Image /ScanHealth
+  DISM /Online /Cleanup-Image /ScanHealth
+  echo [%date% %time%] DISM completed >> "%userprofile%\Desktop\MaintenanceLog.txt"
+)
+if "%r%"=="4" (
+  if "%winVer%"=="5.1" goto DIAG_BLOCK
+  if "%winVer%"=="6.0" goto DIAG_BLOCK
+  echo Running DISM...
+  echo [%date% %time%] DISM started >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  echo ... DISM /Online /Cleanup-Image /RestoreHealth
+  DISM /Online /Cleanup-Image /RestoreHealth
+  echo [%date% %time%] DISM completed >> "%userprofile%\Desktop\MaintenanceLog.txt"
+)
+
+if "%r%"=="5" (
   echo Running CHKDSK...
   echo [%date% %time%] CHKDSK started >> "%userprofile%\Desktop\MaintenanceLog.txt"
   chkdsk C: /f /r
   echo [%date% %time%] CHKDSK completed >> "%userprofile%\Desktop\MaintenanceLog.txt"
 )
 
-if "%r%"=="4" (
+if "%r%"=="6" (
   echo Running Memory Diagnostics...
   echo [%date% %time%] Memory Diagnostics started >> "%userprofile%\Desktop\MaintenanceLog.txt"
   PowerShell -Command "Start-Process 'mdsched.exe'"
 )
 
 if "%r%"=="0" goto MAIN
-goto DIAG
+::goto DIAG
 
 :DIAG_BLOCK
-echo ❌ DISM not supported on your version of Windows (%winName%)
-pause
-goto DIAG
+if "%winVer%"=="5.1" if "%winVer%"=="6.0" (
+:: if "%winVer%"=="5.1" (
+	echo ❌ DISM not supported on your version of Windows (%winName%)
+	pause
+	goto DIAG
+::)
+:: if "%winVer%"=="6.0" (
+::echo ❌ DISM not supported on your version of Windows (%winName%)
+::pause
+::goto DIAG
+::)
+
 
 :NET
 cls
@@ -252,9 +287,10 @@ echo [2] Reset IP Configuration
 echo [3] Reset Winsock
 echo [4] Network Speed Test
 echo [5] Check Internet Connection
+echo [6] Renew IP Address
 echo [0] Back
 echo.
-set /p n= Choose network option [0-5]:
+set /p n= Choose network option [0-6]:
 
 if "%n%"=="1" (
   echo Flushing DNS...
@@ -296,8 +332,15 @@ if "%n%"=="5" (
   echo [%date% %time%] Internet check completed >> "%userprofile%\Desktop\MaintenanceLog.txt"
 )
 
+if "%n%"=="6" (
+  echo Renew IP Address...
+  echo [%date% %time%] Renew IP Address started >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  ipconfig /renew
+  echo [%date% %time%] Renew IP Address Done! >> "%userprofile%\Desktop\MaintenanceLog.txt"
+)
+
 if "%n%"=="0" goto MAIN
-goto NET
+::goto NET
 
 :UPDATE
 cls
