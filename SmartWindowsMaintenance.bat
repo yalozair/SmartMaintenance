@@ -80,9 +80,10 @@ echo [7] System Restore Points
 echo [8] Printers Troubleshooting
 echo [9] Storage Analysis
 echo [10] Update SmartWindowsMaintenance
+echo [11] Open Tools Windows
 echo [0] Exit
 echo.
-set /p opt= Choose an option [0-10]: 
+set /p opt= Choose an option [0-11]: 
 
 if "%opt%"=="1" goto CLEAN
 if "%opt%"=="2" goto DIAG
@@ -94,6 +95,7 @@ if "%opt%"=="7" goto RESTORE
 if "%opt%"=="8" goto PRINTERS
 if "%opt%"=="9" goto STORAGE
 if "%opt%"=="10" goto UpdateTool
+if "%opt%"=="11" goto OpenTool
 if "%opt%"=="0" exit
 ::goto MAIN
 
@@ -887,4 +889,144 @@ if exist "%TEMP_UPDATE%" (
 endlocal
 
 goto MAIN
+
+:OpenTool
+cls
+
+echo 		=====================================================================
+echo 					File: SmartWindowsMaintenancePlus.bat
+echo 	 		Created and customized by: Yousif Alozair © 2025
+echo							Mobile: +967773640964
+echo 		All rights reserved. Redistribution is prohibited without permission.
+echo  			For internal technical use or personal maintenance only.
+echo 		=====================================================================
+echo:
+echo --- Open System Administration --------------
+echo [1] Open Control Panel
+echo [2] Open Windows Tools
+echo [3] Open System Configuration
+echo [4] Open Task Manager
+echo [5] Open Registry Editor
+echo [6] Open Services
+echo [7] Open Event Viewer
+echo [8] Open Performance Monitor
+echo [9] Open Resource Monitor
+echo [10] Open Local Security Policy
+echo [11] Open Local Group Policy Editor
+echo ----------- Storage Tools --------------------
+echo [12] Open Disk Management
+echo [13] Open Disk Cleanup
+echo [14] Open Optimize Drives
+echo [15] Open Computer Management
+echo ----------- Networking Tools --------------------
+echo [16] Open Network Connections
+echo [17] Open Internet Properties
+echo [18] Open Windows Defender Firewall
+echo [19] Open Windows Defender Firewall with Advanced Security
+echo [0] Back
+echo.
+set /p d= Choose cleanup option [0-19]:
+
+if "%d%"=="1" (
+  echo Opening Control Panel...
+  echo [%date% %time%]  Control Panel Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  control
+)
+
+if "%d%"=="2" (
+  echo Opening Windows Tools...
+  echo [%date% %time%] Windows Tools Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  control admintools
+)
+
+if "%d%"=="3" (
+  echo Opening System Configuration...
+  echo [%date% %time%] System Configuration Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  msconfig
+)
+
+if "%d%"=="4" (
+  echo Opening Task Manager...
+  echo [%date% %time%] Task Manager Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  taskmgr
+  )
+if "%d%"=="5" (
+  echo Opening Registry Editor...
+  echo [%date% %time%] Registry Editor Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  regedit
+  )
+if "%d%"=="6" (
+  echo Opening Services...
+  echo [%date% %time%] Services Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  services.msc
+  )
+if "%d%"=="7" (
+  echo Opening Event Viewer...
+  echo [%date% %time%] Event Viewer Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  eventvwr
+  )
+if "%d%"=="8" (
+  echo Opening Performance Monitor...
+  echo [%date% %time%] Performance Monitor Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  perfmon
+  )
+if "%d%"=="9" (
+  echo Opening Resource Monitor...
+  echo [%date% %time%] Resource Monitor Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  resmon
+  )
+if "%d%"=="10" (
+  echo Opening Local Security Policy...
+  echo [%date% %time%] Local Security Policy Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  secpol.msc
+  )
+if "%d%"=="11" (
+  echo Opening Local Group Policy Editor...
+  echo [%date% %time%] Local Group Policy Editor Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  gpedit.msc
+  )
+if "%d%"=="12" (
+  echo Opening Disk Management...
+  echo [%date% %time%] Disk Management Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  diskmgmt.msc
+  )
+if "%d%"=="13" (
+  echo Opening Disk Cleanup...
+  echo [%date% %time%] Task Manager Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  cleanmgr
+  )
+if "%d%"=="14" (
+  echo Opening Optimize Drives...
+  echo [%date% %time%] Optimize Drives Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  dfrgui
+  )
+if "%d%"=="15" (
+  echo Opening Computer Management...
+  echo [%date% %time%] Computer Management Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  compmgmt.msc
+  )
+if "%d%"=="16" (
+  echo Opening Network Connections...
+  echo [%date% %time%] Network Connections Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  ncpa.cpl
+  )
+if "%d%"=="17" (
+  echo Opening Internet Properties...
+  echo [%date% %time%] Internet Properties Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  inetcpl.cpl
+  )
+if "%d%"=="18" (
+  echo Opening Windows Defender Firewall...
+  echo [%date% %time%] Windows Defender Firewall Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  firewall.cpl
+  )
+if "%d%"=="19" (
+  echo Opening Windows Defender Firewall with Advanced Security...
+  echo [%date% %time%] Windows Defender Firewall with Advanced Security Opened >> "%userprofile%\Desktop\MaintenanceLog.txt"
+  wf.msc
+  )
+if "%d%"=="0" goto MAIN
+goto OpenTool
+
+
 
