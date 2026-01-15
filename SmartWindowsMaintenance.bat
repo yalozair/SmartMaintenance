@@ -863,30 +863,63 @@ echo:
 ::goto MAIN
 
 :: تحديث الأداة يدويًا
+:: ============================
+::   Smart Update Mechanism
+:: ============================
+
 setlocal EnableDelayedExpansion
 
-set "SCRIPT_URL=https://raw.githubusercontent.com/yalozair/SmartMaintenance/main/SmartWindowsMaintenancePlus.bat"
-set "TEMP_UPDATE=%TEMP%\SmartWindowsMaintenancePlus_update.bat"
+set "SCRIPT_URL=https://raw.githubusercontent.com/yalozair/SmartMaintenance/refs/heads/main/SmartWindowsMaintenance.bat"
+set "TEMP_UPDATE=%TEMP%\SmartWindowsMaintenance_update.bat"
 
-echo 🔍 Checking for updates to the tool...
+echo 🔍 التحقق من وجود تحديثات...
 
-powershell -NoProfile -Command "$url='%SCRIPT_URL%'; $temp='%TEMP_UPDATE%'; try { $remote=(Invoke-WebRequest -Uri $url -UseBasicParsing).Content; Set-Content -Path $temp -Value $remote -Encoding UTF8; Write-Host '⬇️ A new update is available... Downloaded the new version to temp file.' } catch { Write-Host '❌ An error occurred while trying to check for updates. Please ensure you are connected to the internet.' }"
+powershell -NoProfile -Command ^
+    "$url='%SCRIPT_URL%'; $temp='%TEMP_UPDATE%'; try { $remote=(Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop).Content; Set-Content -Path $temp -Value $remote -Encoding UTF8; Write-Host '⬇️ تم تنزيل ملف التحديث بنجاح.' } catch { Write-Host '❌ حدث خطأ أثناء محاولة تنزيل التحديث. تأكد من الاتصال بالإنترنت.' }"
 
-if exist "%TEMP_UPDATE%" (
-    echo ✅ Update downloaded. Applying update...
-    timeout /t 1 /nobreak >nul
-    move /y "%TEMP_UPDATE%" "%~f0"
-    echo ✅ Update applied successfully.
-    echo Restarting the tool...
-    timeout /t 1 /nobreak >nul
-    start "" "%~f0"
-    exit
-) else (
-    echo ✅ The tool is already updated. No new updates found.
-    timeout /t 2 /nobreak >nul
+:: إذا لم يتم إنشاء الملف → لا يوجد تحديث
+if not exist "%TEMP_UPDATE%" (
+    echo ❌ لم يتم العثور على ملف تحديث. لا يوجد تحديث جديد.
+    goto :EOF
 )
 
+:: التحقق من أن الملف غير فارغ
+for %%A in ("%TEMP_UPDATE%") do if %%~zA lss 10 (
+    echo ❌ ملف التحديث الذي تم تنزيله غير صالح أو فارغ. تم إلغاء العملية.
+    del "%TEMP_UPDATE%"
+    goto :EOF
+)
+
+echo 🔍 مقارنة النسخة الحالية بالنسخة الجديدة...
+
+:: إنشاء هاش للنسخة الحالية
+certutil -hashfile "%~f0" SHA256 > "%TEMP%\local.hash" 2>nul
+
+:: إنشاء هاش للنسخة الجديدة
+certutil -hashfile "%TEMP_UPDATE%" SHA256 > "%TEMP%\remote.hash" 2>nul
+
+:: مقارنة الهاش
+fc "%TEMP%\local.hash" "%TEMP%\remote.hash" >nul
+if not errorlevel 1 (
+    echo ✅ النسخة الحالية هي الأحدث. لا يوجد تحديث جديد.
+    del "%TEMP_UPDATE%"
+    goto :EOF
+)
+
+echo ⬆️ تحديث جديد متوفر — يتم تطبيق التحديث الآن...
+timeout /t 1 /nobreak >nul
+
+:: استبدال السكربت نفسه
+move /y "%TEMP_UPDATE%" "%~f0" >nul
+
+echo ✅ تم تطبيق التحديث بنجاح.
+echo 🔄 إعادة تشغيل الأداة...
+timeout /t 1 /nobreak >nul
+start "" "%~f0"
+exit
+
 endlocal
+
 
 goto MAIN
 
@@ -1027,6 +1060,7 @@ if "%d%"=="19" (
   )
 if "%d%"=="0" goto MAIN
 goto OpenTool
+
 
 
 
